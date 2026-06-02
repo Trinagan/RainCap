@@ -21,8 +21,7 @@ namespace RainCap.Patches
         [PatchPostfix]
         static void Postfix(
             ref bool ___bool_0,
-            ref GClass986 ___gclass986_0,
-            RainScreenDrops __instance
+            ref GClass986 ___gclass986_0
             )
         {
             bool preventRain = RainCap.preventRain.Value;

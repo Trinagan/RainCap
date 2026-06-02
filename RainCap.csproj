@@ -99,7 +99,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="mkdir &quot;$(ProjectDir)\..\..\BepInEx\plugins\$(TargetName)&quot;&#xD;&#xA;copy &quot;$(TargetPath)&quot; &quot;$(ProjectDir)\..\..\BepInEx\plugins\$(TargetName)\$(TargetFileName)&quot;&#xD;&#xA;mkdir &quot;$(ProjectDir)\Release\$(TargetName)\BepInEx\plugins\$(TargetName)&quot;&#xD;&#xA;copy &quot;$(TargetPath)&quot; &quot;$(ProjectDir)\Release\$(TargetName)\BepInEx\plugins\$(TargetName)\$(TargetFileName)&quot;&#xD;&#xA;copy &quot;$(ProjectDir)\LICENSE.md&quot; &quot;$(ProjectDir)\Release\$(TargetName)\BepInEx\plugins\$(TargetName)\&quot;" />
+    <Exec Command="mkdir &quot;$(ProjectDir)\..\..\BepInEx\plugins\$(TargetName)&quot;&#xD;&#xA;copy &quot;$(TargetPath)&quot; &quot;$(ProjectDir)\..\..\BepInEx\plugins\$(TargetName)\$(TargetFileName)&quot;&#xD;&#xA;mkdir &quot;$(ProjectDir)\Release\$(TargetName)\BepInEx\plugins\$(TargetName)&quot;&#xD;&#xA;copy &quot;$(TargetPath)&quot; &quot;$(ProjectDir)\Release\$(TargetName)\BepInEx\plugins\$(TargetName)\$(TargetFileName)&quot;&#xD;&#xA;copy &quot;$(ProjectDir)\LICENSE&quot; &quot;$(ProjectDir)\Release\$(TargetName)\BepInEx\plugins\$(TargetName)\&quot;" />
   </Target>
   <Target Name="ZipOutputPath" AfterTargets="PostBuildEvent">
     <Message Text="Creating .zip for $(SolutionName)" Importance="High" />
