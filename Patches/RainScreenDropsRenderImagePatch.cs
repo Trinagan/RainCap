@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using Comfort.Common;
 using EFT;
@@ -24,16 +25,71 @@ namespace RainCap.Patches
             RenderTexture destination
             )
         {
-            bool preventRain = RainCap.preventRain.Value;
-            var headwearId = LocalPlayer?.Equipment?.GetSlot(EquipmentSlot.Headwear)?.ContainedItem?.Name?.Substring(0, 24);
+            bool capsPreventRain = RainCap.capsPreventRain.Value;
+            bool onlyFaceShields = RainCap.onlyFaceShields.Value;
 
-            if (preventRain)
+            var headwearItem = LocalPlayer?.Equipment?.GetSlot(EquipmentSlot.Headwear)?.ContainedItem;
+            var headwearId = headwearItem?.Name?.Substring(0, 24);
+            var faceCoverItem = LocalPlayer?.Equipment?.GetSlot(EquipmentSlot.FaceCover)?.ContainedItem;
+            var faceCoverId = faceCoverItem?.Name?.Substring(0, 24);
+            var eyewearItem = LocalPlayer?.Equipment?.GetSlot(EquipmentSlot.Eyewear).ContainedItem;
+
+            if (capsPreventRain && !onlyFaceShields)
             {
                 try
                 {
-                    if (!EquipmentIDsUtils.capIds.Contains(headwearId))
+                    if (EquipmentIdsUtils.capIds.Contains(headwearId))
+                    {
+                        Graphics.Blit(source, destination);
+                        return false;               
+                    }
+                    else
                     {
                         return true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    RainCap.LogSource.LogError($"RainCap: Error whilst disabling rain drop rendering for caps - {ex.Message}\n{ex.StackTrace}");
+                    return true;
+                }
+            }
+            else if (onlyFaceShields)
+            {
+                try
+                {
+                    if (headwearItem != null && !EquipmentIdsUtils.capIds.Contains(headwearId) && !EquipmentIdsUtils.faceMasksIds.Contains(headwearId))
+                    {
+                        CompoundItem item = headwearItem as CompoundItem;
+                        FaceShieldComponent faceShield;
+                        item.Slots.OfType<Slot>().First().ContainedItem.TryGetItemComponent<FaceShieldComponent>(out faceShield);
+                        if (faceShield != null && faceShield.Mask != FaceShieldComponent.EMask.Narrow && faceShield.Togglable.On)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            Graphics.Blit(source, destination);
+                            return false;
+                        }
+                    }
+                    else if (faceCoverItem != null && !EquipmentIdsUtils.faceCoversIds.Contains(faceCoverId))
+                    {
+                        FaceShieldComponent faceShield;
+                        faceCoverItem.TryGetItemComponent<FaceShieldComponent>(out faceShield);
+                        if (faceShield != null)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            Graphics.Blit(source, destination);
+                            return false;
+                        }
+                    }
+                    else if (EquipmentIdsUtils.faceMasksIds.Contains(headwearId) || EquipmentIdsUtils.faceCoversIds.Contains(faceCoverId) || eyewearItem != null)
+                    {
+                        return true;    
                     }
                     else
                     {
@@ -43,7 +99,7 @@ namespace RainCap.Patches
                 }
                 catch (Exception ex)
                 {
-                    RainCap.LogSource.LogError($"RainCap: Error whilst disabling rain drop rendering - {ex.Message}\n{ex.StackTrace}");
+                    RainCap.LogSource.LogError($"RainCap: Error whilst disabling rain drop rendering for face shields - {ex.Message}\n{ex.StackTrace}");
                     return true;
                 }
             }

@@ -20,19 +20,21 @@ namespace RainCap.Patches
 
         [PatchPostfix]
         static void Postfix(
-            ref bool ___bool_0,
-            ref GClass986 ___gclass986_0
+            ref bool ____hasGlasses,
+            ref RainScreenDropsPlacer ____dropsPlacer
             )
         {
-            bool preventRain = RainCap.preventRain.Value;
-            var headwearId = LocalPlayer?.Equipment?.GetSlot(EquipmentSlot.Headwear)?.ContainedItem?.Name?.Substring(0, 24);
+            bool capsPreventRain = RainCap.capsPreventRain.Value;
+            bool onlyFaceShields = RainCap.onlyFaceShields.Value;
+            var headwearItem = LocalPlayer?.Equipment?.GetSlot(EquipmentSlot.Headwear)?.ContainedItem;
+            var headwearId = headwearItem?.Name?.Substring(0, 24);
             bool capOn;
 
             try
             {
-                if (!preventRain)
+                if (!capsPreventRain)
                 {
-                    if (EquipmentIDsUtils.capIds.Contains(headwearId))
+                    if (EquipmentIdsUtils.capIds.Contains(headwearId))
                     {
                         capOn = true;
                     }
@@ -40,13 +42,13 @@ namespace RainCap.Patches
                     {
                         capOn = false;
                     }
-                    ___bool_0 = capOn;
-                    ___gclass986_0?.ChangeGlassState(capOn);
+                    ____hasGlasses = capOn;
+                    ____dropsPlacer?.ChangeGlassState(capOn);
                 }
             }
             catch (Exception ex)
             {
-                RainCap.LogSource.LogError($"RainCap: Error whilst making changes to the rain drops rendering - {ex.Message}\n{ex.StackTrace}");
+                RainCap.LogSource.LogError($"RainCap: Error whilst making changes to the rain drops rendering for caps - {ex.Message}\n{ex.StackTrace}");
             }
         }
     }

@@ -18,18 +18,20 @@ namespace RainCap.Patches
 
         [PatchPostfix]
         static void Postfix(
-            GClass986 ___gclass986_0
+            RainScreenDropsPlacer ____dropsPlacer
             )
         {
-            var headwearId = LocalPlayer?.Equipment?.GetSlot(EquipmentSlot.Headwear)?.ContainedItem?.Name?.Substring(0, 24);
+            bool onlyFaceShields = RainCap.onlyFaceShields.Value;
+            var headwearItem = LocalPlayer?.Equipment?.GetSlot(EquipmentSlot.Headwear)?.ContainedItem;
+            var headwearId = headwearItem?.Name?.Substring(0, 24);
 
-            if (EquipmentIDsUtils.capIds.Contains(headwearId))
+            if (EquipmentIdsUtils.capIds.Contains(headwearId) && !onlyFaceShields)
             {
-                ___gclass986_0.ChangeGlassState(true);
+                ____dropsPlacer.ChangeGlassState(true);
             }
             else
             {
-                ___gclass986_0.ChangeGlassState(false);
+                return;
             }
         }
     }
