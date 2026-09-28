@@ -61,8 +61,14 @@ namespace RainCap.Patches
                     if (headwearItem != null && !EquipmentIdsUtils.capIds.Contains(headwearId) && !EquipmentIdsUtils.faceMasksIds.Contains(headwearId))
                     {
                         CompoundItem item = headwearItem as CompoundItem;
-                        FaceShieldComponent faceShield;
-                        item.Slots.OfType<Slot>().First().ContainedItem.TryGetItemComponent<FaceShieldComponent>(out faceShield);
+                        FaceShieldComponent faceShield = null;
+                        foreach (Slot slot in item.Slots)
+                        {
+                            if (slot.ContainedItem != null && slot.ContainedItem.TryGetItemComponent<FaceShieldComponent>(out faceShield))
+                            {
+                                break;
+                            }
+                        }
                         if (faceShield != null && faceShield.Mask != FaceShieldComponent.EMask.Narrow && faceShield.Togglable.On)
                         {
                             return true;
